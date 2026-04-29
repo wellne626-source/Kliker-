@@ -1,0 +1,432 @@
+<!DOCTYPE html><html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Premium Clicker</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }body {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0f172a, #111827, #1e293b);
+  color: white;
+  display: flex;
+  justify-content: center;
+  padding: 12px;
+}
+
+.container {
+  width: 100%;
+  max-width: 520px;
+  display: grid;
+  gap: 16px;
+  padding: 10px 0 30px;
+}
+
+.title {
+  text-align: center;
+}
+
+.title h1 {
+  font-size: 42px;
+  margin-bottom: 8px;
+}
+
+.logo {
+  font-weight: 900;
+  letter-spacing: 6px;
+  color: white;
+  text-shadow:
+    0 0 8px rgba(255,255,255,0.9),
+    0 0 18px rgba(255,255,255,0.8),
+    0 0 35px rgba(255,255,255,0.7);
+  animation: none;
+  text-transform: uppercase;
+}
+
+@keyframes logoBlink {
+  0% { opacity: 1; transform: scale(1); }
+  100% { opacity: 1; transform: scale(1); }
+}
+  50% { opacity: 1; transform: scale(1.04); }
+  100% { opacity: 0.7; transform: scale(1); }
+}
+
+.logo::before {
+  content: '';
+}
+
+@keyframes glowPulse {
+  0% { transform: scale(1); opacity: 0.9; }
+  50% { transform: scale(1.03); opacity: 1; }
+  100% { transform: scale(1); opacity: 0.9; }
+}
+
+.title h1 {
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+
+.card {
+  background: rgba(255,255,255,0.08);
+  border-radius: 22px;
+  padding: 20px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.center {
+  text-align: center;
+  position: relative;
+}
+
+.coins {
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 18px;
+}
+
+.click-btn {
+  width: 170px;
+  height: 170px;
+  border: none;
+  border-radius: 50%;
+  background: linear-gradient(45deg, #facc15, #f97316);
+  color: black;
+  font-size: 24px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+}
+
+.click-btn:hover { transform: scale(1.03); }
+.click-btn:active { transform: scale(0.92); }
+
+.stats {
+  margin-top: 18px;
+  font-size: 16px;
+  line-height: 1.8;
+}
+
+.upgrades {
+  display: grid;
+  gap: 16px;
+}
+
+.upgrade h2 {
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+.buy-btn, .control-btn {
+  width: 100%;
+  padding: 13px;
+  margin-top: 12px;
+  border: none;
+  border-radius: 12px;
+  background: #ffffff;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: bold;
+  transition: 0.25s;
+}
+
+.buy-btn.locked {
+  background: #2b2b2b;
+  color: #888;
+  cursor: not-allowed;
+  opacity: 0.8;
+  box-shadow: none;
+}
+
+.buy-btn.ready {
+  background: white;
+  color: black;
+  box-shadow: 0 0 15px rgba(255,255,255,0.35);
+  cursor: pointer;
+}
+
+.level-box {
+  margin-top: 14px;
+  font-size: 16px;
+  line-height: 1.7;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255,255,255,0.15);
+}
+
+.progress-bar {
+  width: 100%;
+  height: 10px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-top: 8px;
+}
+
+.progress-fill {
+  height: 100%;
+  width: 0%;
+  background: white;
+  transition: 0.3s;
+}
+  width: 100%;
+  padding: 13px;
+  margin-top: 12px;
+  border: none;
+  border-radius: 12px;
+  background: white;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: bold;
+}
+
+
+
+.floating {
+  position: absolute;
+  font-weight: bold;
+  font-size: 20px;
+  animation: floatUp 0.8s forwards;
+  pointer-events: none;
+}
+
+@keyframes floatUp {
+  from { opacity: 1; transform: translateY(0); }
+  to { opacity: 0; transform: translateY(-60px); }
+}
+
+  </style>
+</head>
+<body>  <div class="container">
+    <div class="title">
+      <h1 class="logo">KLIKSWE</h1></div>
+
+<div class="card center" id="clickArea">
+  <div class="coins" id="coins">0 монет</div>
+
+  <button class="click-btn" onclick="handleClick()" ontouchstart="handleTouch()">TAP</button>
+
+  <div class="stats">
+    <div class="level-box">
+      <div>Уровень: <span id="level">1</span></div>
+      <div>До следующего уровня: <span id="nextLevel">100</span></div>
+      <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    </div>
+    <div>Сила клика: <span id="power">1</span></div>
+    <div>Автодоход: <span id="auto">0</span>/сек</div>
+    <div>Крит шанс: <span id="crit">0</span>%</div>
+  </div>
+</div>
+
+<div class="upgrades">
+  <div class="card upgrade">
+    <h2>⚡ Улучшение клика</h2>
+    <p>Цена: <span id="powerCost">25</span></p>
+    <button class="buy-btn locked" id="powerBtn" onclick="buyPower()">Купить</button>
+  </div>
+
+  <div class="card upgrade">
+    <h2>🚀 Автодоход</h2>
+    <p>Цена: <span id="autoCost">100</span></p>
+    <button class="buy-btn locked" id="autoBtn" onclick="buyAuto()">Купить</button>
+  </div>
+
+  <div class="card upgrade">
+    <h2>💥 Критический клик</h2>
+    <p>Цена: <span id="critCost">250</span></p>
+    <button class="buy-btn locked" id="critBtn" onclick="buyCrit()">Купить</button>
+  </div>
+
+  <div class="card upgrade">
+    <h2>⚙ Управление</h2>
+    <button class="control-btn" onclick="saveGame()">Сохранить игру</button>
+    <button class="control-btn" onclick="resetGame()">Сбросить игру</button>
+  </div>
+</div>
+
+  </div>  <script>
+    let coins = Number(localStorage.getItem('coins')) || 0;
+    let power = Number(localStorage.getItem('power')) || 1;
+    let autoIncome = Number(localStorage.getItem('autoIncome')) || 0;
+    let critChance = Number(localStorage.getItem('critChance')) || 0;
+    let level = Number(localStorage.getItem('level')) || 1;
+
+    function notify(text) {
+      return;
+    }
+
+    function saveGame() {
+      localStorage.setItem('coins', coins);
+      localStorage.setItem('power', power);
+      localStorage.setItem('autoIncome', autoIncome);
+      localStorage.setItem('critChance', critChance);
+      localStorage.setItem('level', level);
+      
+    }
+
+    function resetGame() {
+      coins = 0;
+      power = 1;
+      autoIncome = 0;
+      critChance = 0;
+      level = 1;
+      saveGame();
+      updateUI();
+      notify('♻ Игра полностью сброшена');
+    }
+
+    function updateUI() {
+      const powerCost = power * 25;
+      const autoCost = (autoIncome + 1) * 100;
+      const critCost = (critChance + 1) * 250;
+      const nextLevel = Math.floor(level * level * 120 + level * 80);
+
+      while (coins >= Math.floor(level * level * 120 + level * 80)) {
+        level++;
+        notify('🏆 Новый уровень: ' + level + '!');
+      }
+      document.getElementById('coins').innerText = coins + ' монет';
+      document.getElementById('power').innerText = power;
+      document.getElementById('auto').innerText = autoIncome;
+      document.getElementById('crit').innerText = critChance;
+      document.getElementById('powerCost').innerText = powerCost;
+      document.getElementById('autoCost').innerText = autoCost;
+      document.getElementById('critCost').innerText = critCost;
+      document.getElementById('level').innerText = level;
+      document.getElementById('nextLevel').innerText = Math.floor(level * level * 120 + level * 80);
+      document.getElementById('progressFill').style.width = Math.min((coins / Math.floor(level * level * 120 + level * 80)) * 100, 100) + '%';
+
+      toggleButton('powerBtn', coins >= powerCost);
+      toggleButton('autoBtn', coins >= autoCost);
+      toggleButton('critBtn', coins >= critCost);
+    }
+
+    function toggleButton(id, active) {
+      const btn = document.getElementById(id);
+      btn.classList.remove('locked', 'ready');
+      btn.classList.add(active ? 'ready' : 'locked');
+      btn.disabled = !active;
+    }
+
+    function createFloatingText(value) {
+      const area = document.getElementById('clickArea');
+      const el = document.createElement('div');
+      el.className = 'floating';
+      el.innerText = '🔥 +' + value;
+      el.style.left = (40 + Math.random() * 20) + '%';
+      el.style.top = '140px';
+      el.style.fontSize = '22px';
+      area.appendChild(el);
+      setTimeout(() => el.remove(), 900);
+    }
+
+    function handleTouch() {
+      navigator.vibrate && navigator.vibrate(30);
+    }
+
+    function handleClick() {
+      let gain = power;
+      if (Math.random() * 100 < critChance) {
+        gain *= 3;
+        notify('Критический удар x3!');
+      }
+      coins += gain;
+      createFloatingText(gain);
+      updateUI();
+      saveGame();
+    }
+
+    function buyPower() {
+      const cost = power * 25;
+      if (coins >= cost) {
+        coins -= cost;
+        power++;
+        notify('⚡ Сила клика увеличена!');
+        updateUI();
+        saveGame();
+      }
+    }
+
+    function buyAuto() {
+      const cost = (autoIncome + 1) * 100;
+      if (coins >= cost) {
+        coins -= cost;
+        autoIncome++;
+        notify('🚀 Автодоход стал больше!');
+        updateUI();
+        saveGame();
+      }
+    }
+
+    function buyCrit() {
+      const cost = (critChance + 1) * 250;
+      if (coins >= cost) {
+        coins -= cost;
+        critChance += 2;
+        notify('💥 Шанс критического удара повышен!');
+        updateUI();
+        saveGame();
+      }
+    }
+
+    setInterval(() => {
+      coins += autoIncome;
+      updateUI();
+      localStorage.setItem('coins', coins);
+    }, 1000);
+
+    updateUI();
+  </script>  <!-- Новые системы: боссы, ежедневная награда, достижения, престиж, магазин бустов, комбо и случайные события -->  <script>
+    let combo = 0;
+    let prestige = Number(localStorage.getItem('prestige')) || 1;
+    let dailyRewardClaimed = localStorage.getItem('dailyReward') || '';
+
+    function claimDailyReward() {
+      const today = new Date().toDateString();
+      if (dailyRewardClaimed !== today) {
+        coins += 500 * prestige;
+        dailyRewardClaimed = today;
+        localStorage.setItem('dailyReward', today);
+        updateUI();
+      }
+    }
+
+    function rebirth() {
+      if (level >= 10) {
+        prestige += 1;
+        coins = 0;
+        power = 1;
+        autoIncome = 0;
+        critChance = 0;
+        level = 1;
+        localStorage.setItem('prestige', prestige);
+        saveGame();
+        updateUI();
+      }
+    }
+
+    function randomEvent() {
+      if (Math.random() < 0.15) {
+        coins += 200 * prestige;
+        updateUI();
+      }
+    }
+
+    const oldHandleClick = handleClick;
+    handleClick = function () {
+      combo++;
+      if (combo >= 15) {
+        coins += power * 5;
+        combo = 0;
+      }
+      oldHandleClick();
+      randomEvent();
+    }
+
+    setTimeout(claimDailyReward, 1500);
+  </script></body>
+</html>
